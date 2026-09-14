@@ -1,0 +1,41 @@
+:root {
+  --bg: #10161a;
+  --panel: #161e23;
+  --panel-raised: #1b252b;
+  --line: #2a363c;
+  --text: #e7edef;
+  --text-muted: #8a9aa1;
+  --real: #4fb286;
+  --flag: #e0a458;
+  --scan: #4fc3d9;
+  --danger: #d9695c;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+a { color: var(--scan); }
+
+::selection { background: var(--scan); color: #06181c; }
