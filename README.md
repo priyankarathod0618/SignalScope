@@ -246,7 +246,7 @@ Then open:
 http://localhost:5173
 ```
 
-## ✨ Core Features
+## Core Features
 
 - **AI Image Detection** — classifies images as **real or likely AI-generated**, with calibrated confidence rather than relying only on raw model scores.
 
