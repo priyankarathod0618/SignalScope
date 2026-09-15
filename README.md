@@ -149,7 +149,7 @@ The dataset is **not included in this repository**.
 
 ```bash
 git clone https://github.com/priyankarathod0618/SignalScope.git
-cd SignalScope
+cd SignalScope/signalscope
 ```
 
 ### 2. Create a Python environment
