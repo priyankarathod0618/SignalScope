@@ -1,5 +1,4 @@
 data/
-checkpoints/
 node_modules/
 __pycache__/
 *.pyc
