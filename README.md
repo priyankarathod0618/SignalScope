@@ -246,7 +246,6 @@ Then open:
 http://localhost:5173
 ```
 
----
 ## ✨ Core Features
 
 - **AI Image Detection** — classifies images as **real or likely AI-generated**, with calibrated confidence rather than relying only on raw model scores.
@@ -263,7 +262,6 @@ http://localhost:5173
 
 - **Deployable Web Interface** — a **React frontend connected to a FastAPI backend**, providing an accessible interface for running the analysis pipeline.
 
-```
 ## Core ML Pipeline
 
 SignalScope follows a multi-stage analysis pipeline:
