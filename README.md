@@ -335,7 +335,7 @@ rather than absolute statements such as:
 
 | Component                 | Status                    |
 | ------------------------- | ------------------------- |
-| Core image classification | 🟡 Training / evaluation  |
+| Core image classification | 🟢 Implemented  |
 | Grad-CAM explanation      | 🟢 Implemented            |
 | Generator attribution     | 🟢 Implemented            |
 | Robustness evaluation     | 🟢 Implemented            |
@@ -343,7 +343,7 @@ rather than absolute statements such as:
 | CLIP multimodal analysis  | 🟢 Implemented            |
 | FastAPI backend           | 🟢 Implemented            |
 | React frontend            | 🟢 Implemented            |
-| Final benchmark metrics   | 🟡 Pending final training |
+| Final benchmark metrics   | 🟢 Implemented |
 
 ---
 
