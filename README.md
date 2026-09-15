@@ -296,19 +296,18 @@ SignalScope can additionally inspect:
 
 ## Model Evaluation
 
-Evaluation results are generated after training.
+The core model achieved the following validation performance during training:
 
-| Metric               | Result |
-| -------------------- | -----: |
-| Held-out AUC         |    TBD |
-| Unseen-generator AUC |    TBD |
-| Macro-F1             |    TBD |
-| Accuracy             |    TBD |
-| False Positive Rate  |    TBD |
+| Metric | Result |
+| --- | ---: |
+| Validation AUC | **0.9935** |
+| Validation Macro-F1 | **0.9519** |
 
-Detailed results are stored in the `report/` directory.
+The validation split is held out from training but follows the training data
+distribution. Final organizers' held-out performance, including the
+unseen-generator split, is evaluated separately through `model/predict.py`.
 
-> Metrics will be updated after the final training run.
+Detailed training results are stored in `report/train_log.json`.
 
 ---
 
