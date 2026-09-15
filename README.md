@@ -1,134 +1,365 @@
 # SignalScope — Telling Real From Synthetic
 
-Real-vs-AI-generated image classifier with a faithful, localised
-explanation, generator attribution, degradation robustness, provenance
-signals, image–caption consistency, and a deployable web app. Built for
-SIH-2026 (LJIET, C-433).
+<p align="center">
+  <strong>AI-Powered Image Authenticity & Media Forensics</strong>
+</p>
 
-**Scope note (read first):** this system classifies general synthetic
-imagery (scenes, objects, product shots). It is **not** for face-swap
-deepfakes of real people and does **not** adjudicate political or
-real-world-event claims. Every verdict is presented as a likelihood
-("likely AI-generated"), never an accusation.
+<p align="center">
+  Detect AI-generated images, understand why a model made its decision, and inspect additional signals such as generator attribution, provenance, and image–caption consistency.
+</p>
 
-## 1. What's built
+<p align="center">
 
-| | Module | Status |
-|---|---|---|
-| Core | Real-vs-AI-generated classification + calibrated confidence | ✅ |
-| A | Faithful explanation (Grad-CAM heat-map + grounded text) | ✅ |
-| B | Generator attribution (GAN vs diffusion) | ✅ (heuristic fallback; trainable head included) |
-| C | Robustness to degradation (JPEG, resize, screenshot-sim) | ✅ (evaluation script) |
-| D | Provenance & metadata (C2PA / EXIF) | ✅ |
-| E | Multimodal image + caption consistency (CLIP) | ✅ |
-| F | Deployable interface (FastAPI + React drag-and-drop) | ✅ |
-| G | Active-defence / adversarial failure analysis | ⚠️ analysis harness included, run and fill in `report/adversarial_findings.md` |
+![Python](https://img.shields.io/badge/Python-3.13+-3776AB?style=flat-square\&logo=python\&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square\&logo=pytorch\&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square\&logo=fastapi\&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square\&logo=react\&logoColor=black)
+![Computer Vision](https://img.shields.io/badge/Computer%20Vision-ML-6C63FF?style=flat-square)
 
-## 2. Setup & run (reproduce a prediction in under 10 minutes)
+</p>
+
+> Built for **Smart India Hackathon 2026 — LJIET, C-433**
+
+---
+
+## Overview
+
+**SignalScope** is a computer-vision based media forensics system designed to distinguish **real images from AI-generated synthetic images**.
+
+Instead of returning only a binary prediction, SignalScope combines classification with **explainability, confidence calibration, generator attribution, robustness analysis, provenance signals, and multimodal consistency checks**.
+
+The goal is to make AI-image detection more **interpretable, transparent, and useful for real-world analysis**.
+
+---
+
+## What SignalScope Does
+
+| Capability                 | Description                                                                        |
+| -------------------------- | ---------------------------------------------------------------------------------- |
+| **AI Image Detection**     | Classifies images as real or likely AI-generated                                   |
+| **Confidence Calibration** | Produces calibrated confidence rather than raw model scores                        |
+| **Visual Explanation**     | Grad-CAM heatmaps show where the model focused                                     |
+| **Generator Attribution**  | Provides GAN vs diffusion attribution signals                                      |
+| **Robustness Analysis**    | Tests predictions under JPEG compression, resizing and screenshot-like degradation |
+| **Provenance Analysis**    | Inspects C2PA and EXIF metadata when available                                     |
+| **Multimodal Analysis**    | Checks image–caption consistency using CLIP                                        |
+| **Web Interface**          | React-based interface connected to a FastAPI backend                               |
+
+---
+
+## Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │   Image + Caption    │
+                    │    + Metadata        │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Pre-processing &     │
+                    │ Image Augmentation   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   Vision Detector   │
+                    │ ResNet-50 / ViT /   │
+                    │   EfficientNet      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Calibrated Verdict  │
+                    │ Real / Likely AI    │
+                    └──────────┬──────────┘
+                               │
+             ┌─────────────────┼─────────────────┐
+             ▼                 ▼                 ▼
+      ┌────────────┐   ┌─────────────┐   ┌──────────────┐
+      │ Grad-CAM   │   │ Attribution │   │ Provenance / │
+      │ Explanation│   │ & Robustness│   │ Multimodal   │
+      └────────────┘   └─────────────┘   └──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     React UI        │
+                    │   + FastAPI API     │
+                    └─────────────────────┘
+```
+
+---
+
+## Tech Stack
+
+| Layer                     | Technology                           |
+| ------------------------- | ------------------------------------ |
+| **Frontend**              | React, JavaScript, CSS               |
+| **Backend**               | FastAPI, Uvicorn                     |
+| **Machine Learning**      | PyTorch, torchvision, timm           |
+| **Computer Vision**       | ResNet-50, ViT-B/16, EfficientNet-B0 |
+| **Explainability**        | Grad-CAM                             |
+| **Multimodal Analysis**   | CLIP                                 |
+| **Evaluation**            | scikit-learn                         |
+| **Metadata / Provenance** | C2PA, EXIF                           |
+| **Dataset**               | CIFAKE                               |
+
+---
+
+## Project Structure
+
+```text
+SignalScope/
+├── model/              # Dataset, training, prediction & ML modules
+├── backend/             # FastAPI application and API endpoints
+├── frontend/            # React web interface
+├── report/              # Model, robustness & analysis reports
+├── requirements.txt     # Python dependencies
+├── ORIGINALITY.md       # Project originality information
+└── README.md
+```
+
+---
+
+## Dataset
+
+SignalScope uses **CIFAKE** as its core training dataset.
+
+* **100,000 training images**
+
+  * 50,000 REAL
+  * 50,000 FAKE
+* **20,000 test images**
+
+  * 10,000 REAL
+  * 10,000 FAKE
+* Real images are derived from CIFAR-10.
+* Synthetic images are generated using Stable Diffusion.
+
+Dataset:
+[CIFAKE — Kaggle](https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images)
+
+The dataset is **not included in this repository**.
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
-# 1. Clone and install
-git clone <this-repo-url> && cd signalscope
-python -m venv .venv && source .venv/bin/activate
+git clone https://github.com/priyankarathod0618/SignalScope.git
+cd SignalScope
+```
+
+### 2. Create a Python environment
+
+```bash
+python -m venv .venv
+```
+
+Activate it:
+
+**Windows**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+**Linux / macOS**
+
+```bash
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
-
-# 2. Get the data (core dataset, cited in Section 3)
-# Download CIFAKE from Kaggle and unzip into data/train and data/test
-# so the layout is data/train/REAL, data/train/FAKE, data/test/REAL, data/test/FAKE
-kaggle datasets download -d birdy654/cifake-real-and-ai-generated-synthetic-images -p data --unzip
-
-# 3. Train the core model (transfer learning, ResNet-50 by default)
-python model/train.py --data-dir data/train --epochs 8 --backbone resnet50 \
-    --out checkpoints/signalscope.pt
-# Swap --backbone vit_b16 or efficientnet_b0 to try other encoders.
-
-# 4. Run a single prediction (this is the organizers' scored interface)
-python model/predict.py --checkpoint checkpoints/signalscope.pt --image path/to/img.jpg
-
-# 5. Start the backend API
-uvicorn backend.app:app --reload --port 8000
-
-# 6. Start the frontend (separate terminal)
-cd frontend && npm install && npm run dev
-# open http://localhost:5173
 ```
 
-Organizers evaluating the held-out set should call `model/predict.py` (or
-`backend/app.py`'s `/api/predict`) directly, per Section 4.1 — this
-interface is never retrained or fine-tuned on that set.
+### 4. Prepare CIFAKE
 
-## 3. Datasets used
+Place the dataset in:
 
-- **Core training/validation:** [CIFAKE](https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images)
-  (real CIFAR-10 photos vs. Stable-Diffusion-generated equivalents),
-  MIT/open-licensed, ~120k balanced images.
-- **Held-out test:** organizers' unseen-generator set — never trained on.
-- **Optional extra training data** (cite if used): e.g.
-  [GenImage](https://github.com/GenImage-Dataset/GenImage) for broader
-  generator coverage. Add via `--extra-dirs`.
-
-## 4. Reported metrics
-
-Fill in after training (auto-written to `report/train_log.json` and the
-checkpoint's metadata):
-
-- Overall held-out AUC: `TBD`
-- Unseen-generator-split AUC (primary): `TBD`
-- Macro-F1: `TBD`
-- Confusion matrix: `TBD`
-- Accuracy & FPR at operating threshold 0.5: `TBD`
-
-See `report/model_report.md` for the full one-page report and
-`report/robustness_report.json` for the Module C degradation curve.
-
-## 5. Architecture overview
-
-```
-Image (+ optional caption / metadata)
-   → Pre-processing & Augmentation (torchvision transforms)
-   → CV Detector (ResNet-50 / ViT-B/16 / EfficientNet-B0, transfer-learned)
-   → Temperature-scaled calibrated verdict
-   → Explainer (Grad-CAM heat-map + grounded, signal-based text — model/gradcam.py)
-   → Auxiliary signals (attribution, provenance, multimodal — model/*.py)
-   → Responsible UI ("likely AI-generated", never "certain" — frontend/)
+```text
+data/
+├── train/
+│   ├── REAL/
+│   └── FAKE/
+└── test/
+    ├── REAL/
+    └── FAKE/
 ```
 
-Backbone: transfer-learned ResNet-50 (ImageNet-pretrained) by default —
-chosen for training-time stability and speed within a hackathon window;
-`model/train.py --backbone vit_b16` swaps in a ViT-B/16 for teams with more
-compute/time, using the same pipeline.
+### 5. Train the model
 
-Calibration: temperature scaling fit on the validation split only
-(`model/calibration.py`), so confidence numbers mean what they say.
-
-## 6. Known limitations
-
-- The generator-attribution module (B) defaults to a frequency-spectrum
-  **heuristic**, not a trained classifier, unless you provide per-generator
-  sub-labels and train `attribution.AttributionHead` — see that file's
-  docstring. Report attribution results as heuristic in any write-up.
-- C2PA reading (Module D) degrades gracefully (`present: false`) if the
-  `c2pa-python` native library isn't available in your environment.
-- The multimodal consistency thresholds (Module E) are documented
-  rules-of-thumb from typical CLIP similarity distributions, not a
-  calibrated probability — do not present them as such.
-- Robustness (Module C) is evaluated, not adversarially hardened; see
-  Module G's harness for known failure modes once you've run it.
-
-## 7. Demo video & deployed app
-
-Link here once recorded (3–5 min, showing core + bonus modules per
-Section 7.4): `TBD`
-
-## 8. Repository structure
-
+```bash
+python model/train.py \
+  --data-dir data/train \
+  --epochs 8 \
+  --backbone resnet50 \
+  --out checkpoints/signalscope.pt
 ```
-signalscope/
-  README.md
-  ORIGINALITY.md
-  requirements.txt
-  model/          # dataset, training, predict interface, explainability, bonus modules
-  backend/         # FastAPI service
-  frontend/        # React drag-and-drop UI
-  report/          # model report, train log, robustness report
+
+Other supported backbones:
+
+```text
+resnet50
+vit_b16
+efficientnet_b0
 ```
+
+### 6. Run a prediction
+
+```bash
+python model/predict.py \
+  --checkpoint checkpoints/signalscope.pt \
+  --image path/to/image.jpg
+```
+
+### 7. Start the backend
+
+```bash
+python -m uvicorn backend.app:app --reload --port 8000
+```
+
+API documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+### 8. Start the frontend
+
+Open another terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Core ML Pipeline
+
+SignalScope follows a multi-stage analysis pipeline:
+
+**Image → Preprocessing → Vision Model → Calibrated Prediction → Explanation → Additional Forensic Signals**
+
+### Classification
+
+The default detector uses a **transfer-learned ResNet-50** model.
+
+### Explainability
+
+**Grad-CAM** generates a visual heatmap showing the regions that influenced the prediction.
+
+### Calibration
+
+Temperature scaling is applied using the validation split so that confidence scores are more meaningful.
+
+### Additional Signals
+
+SignalScope can additionally inspect:
+
+* Generator characteristics
+* Image degradation robustness
+* C2PA provenance
+* EXIF metadata
+* Image–caption consistency
+
+---
+
+## Model Evaluation
+
+Evaluation results are generated after training.
+
+| Metric               | Result |
+| -------------------- | -----: |
+| Held-out AUC         |    TBD |
+| Unseen-generator AUC |    TBD |
+| Macro-F1             |    TBD |
+| Accuracy             |    TBD |
+| False Positive Rate  |    TBD |
+
+Detailed results are stored in the `report/` directory.
+
+> Metrics will be updated after the final training run.
+
+---
+
+## Responsible AI
+
+SignalScope is designed as a **forensic assistance tool**, not an absolute authority.
+
+### Scope
+
+The system focuses on **general synthetic imagery**, such as:
+
+* Scenes
+* Objects
+* Product images
+* Generated visual content
+
+It is **not designed for face-swap deepfakes of real people** and does not determine whether political or real-world-event claims are true.
+
+Predictions are therefore expressed as:
+
+> **Likely AI-generated**
+
+rather than absolute statements such as:
+
+> **Definitely fake**
+
+---
+
+## Known Limitations
+
+* Generator attribution currently uses a heuristic fallback unless a dedicated attribution classifier is trained.
+* C2PA functionality depends on the availability of the required native library.
+* CLIP consistency thresholds are heuristic rather than calibrated probabilities.
+* Robustness testing evaluates known degradations but does not make the model adversarially hardened.
+* Performance may vary for generators and image distributions not represented in the training data.
+
+---
+
+## Project Status
+
+| Component                 | Status                    |
+| ------------------------- | ------------------------- |
+| Core image classification | 🟡 Training / evaluation  |
+| Grad-CAM explanation      | 🟢 Implemented            |
+| Generator attribution     | 🟢 Implemented            |
+| Robustness evaluation     | 🟢 Implemented            |
+| C2PA / EXIF analysis      | 🟢 Implemented            |
+| CLIP multimodal analysis  | 🟢 Implemented            |
+| FastAPI backend           | 🟢 Implemented            |
+| React frontend            | 🟢 Implemented            |
+| Final benchmark metrics   | 🟡 Pending final training |
+
+---
+
+## SIH 2026
+
+**Problem:** Telling Real From Synthetic in the Age of Generative Media
+
+**Team:** TrustUsBro
+**Institution:** L. J. Institute of Engineering & Technology
+**Problem Code:** C-433
+**Domain:** AI / Media Forensics / Trust & Safety
+
+---
+
+## License
+
+Academic project developed for **Smart India Hackathon 2026**.
+
+---
