@@ -247,7 +247,23 @@ http://localhost:5173
 ```
 
 ---
+## ✨ Core Features
 
+- **AI Image Detection** — classifies images as **real or likely AI-generated**, with calibrated confidence rather than relying only on raw model scores.
+
+- **Visual Explanation** — generates **Grad-CAM heatmaps** showing where the model focused, making the prediction more interpretable.
+
+- **Generator Attribution** — provides signals for **GAN vs diffusion-generated imagery**, with heuristic fallback when a trained attribution head is unavailable.
+
+- **Robustness Analysis** — evaluates predictions under **JPEG compression, resizing, and screenshot-like degradation** to understand how stable the detector remains.
+
+- **Provenance Analysis** — inspects available **C2PA and EXIF metadata** to provide additional provenance signals alongside the model prediction.
+
+- **Multimodal Analysis** — uses **CLIP** to check image–caption consistency as an additional signal.
+
+- **Deployable Web Interface** — a **React frontend connected to a FastAPI backend**, providing an accessible interface for running the analysis pipeline.
+
+```
 ## Core ML Pipeline
 
 SignalScope follows a multi-stage analysis pipeline:
